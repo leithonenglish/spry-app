@@ -3,24 +3,25 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { useCurrencyInput } from 'vue-currency-input'
-
-type CurrencyInputProps = {
-  modelValue: number,
-  options: Object
-}
+import { defineComponent, toRefs, watch } from "vue";
+import { useCurrencyInput } from "vue-currency-input";
 
 export default defineComponent({
-  name: 'CurrencyInput',
+  name: "CurrencyInput",
   props: {
     modelValue: Number,
-    options: Object
+    options: Object,
   },
   setup(props: any) {
-    const { formattedValue, inputRef } = useCurrencyInput(props.options)
+    const { formattedValue, inputRef, setValue } = useCurrencyInput(
+      props.options
+    );
+    const { modelValue } = toRefs(props);
+    watch(modelValue, (value: number) => {
+      setValue(value);
+    });
 
-    return { inputRef, formattedValue }
-  }
-})
+    return { inputRef, formattedValue };
+  },
+});
 </script>

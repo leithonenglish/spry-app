@@ -25,7 +25,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Summary, Form } from "../components/calculator";
-import { SalaryType, SalaryPeriod, PensionType } from "../models/enums";
+import { SalaryType, SalaryFrequency, PensionType } from "../models/enums";
 import { Pension, Salary } from "../models/calculator";
 import { mapState } from "vuex";
 
@@ -39,14 +39,15 @@ export default defineComponent({
     return {
       salary: {
         type: SalaryType.FIXED,
-        period: SalaryPeriod.ANNUALLY,
+        frequency: SalaryFrequency.ANNUALLY,
         amount: 0,
+        hoursWorkedPerDay: 8,
         retired: false,
         over65: false,
         otherIcome: 0,
       } as Salary,
       pension: {
-        active: true,
+        active: false,
         type: PensionType.FIXED,
         amount: 0,
       } as Pension,
@@ -67,16 +68,17 @@ export default defineComponent({
       return this.pension.type === PensionType.FIXED;
     },
     income(): number {
-      const income = {
-        [`${SalaryPeriod.ANNUALLY}`]: this.salary.amount,
-        [`${SalaryPeriod.MONTHLY}`]: this.salary.amount * 12,
-        [`${SalaryPeriod.SEMI_MONTHLY}`]: this.salary.amount * 24,
-        [`${SalaryPeriod.BI_WEEKLY}`]: this.salary.amount * 26,
-        [`${SalaryPeriod.WEEKLY}`]: this.salary.amount * 52,
-        [`${SalaryPeriod.HOURLY}`]: this.salary.amount,
+      const incomeByFrequency = {
+        [`${SalaryFrequency.ANNUALLY}`]: this.salary.amount,
+        [`${SalaryFrequency.MONTHLY}`]: this.salary.amount * 12,
+        [`${SalaryFrequency.SEMI_MONTHLY}`]: this.salary.amount * 24,
+        [`${SalaryFrequency.BI_WEEKLY}`]: this.salary.amount * 26,
+        [`${SalaryFrequency.WEEKLY}`]: this.salary.amount * 52,
+        [`${SalaryFrequency.HOURLY}`]:
+          this.salary.amount * 52 * this.salary.hoursWorkedPerDay,
       };
       return (
-        parseFloat(`${income[this.salary.period] || 0}`) +
+        parseFloat(`${incomeByFrequency[`${this.salary.frequency}`] || 0}`) +
         this.salary.otherIcome
       );
     },

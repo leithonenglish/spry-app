@@ -1,4 +1,4 @@
-export enum SalaryPeriod {
+export enum SalaryFrequency {
   ANNUALLY = 1,
   MONTHLY,
   SEMI_MONTHLY,

@@ -1,9 +1,10 @@
-import { SalaryPeriod, SalaryType } from "../enums";
+import { SalaryFrequency, SalaryType } from "../enums";
 
 export default interface Salary {
   type: SalaryType;
-  period: SalaryPeriod;
+  frequency: SalaryFrequency;
   amount: number;
+  hoursWorkedPerDay: number;
   retired: boolean;
   over65: boolean;
   otherIcome: 0;

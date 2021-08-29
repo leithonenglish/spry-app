@@ -1,19 +1,29 @@
 <template>
   <select
-    class="font-semibold text-gray-600 h-14 pl-3 pr-12 border-2 border-gray-300 border-solid rounded-[4px] appearance-none"
+    class="
+      font-semibold
+      text-gray-600
+      h-14
+      pl-3
+      pr-12
+      border-2 border-gray-300 border-solid
+      rounded-[4px]
+      appearance-none
+    "
     v-model="value"
-    @change="$emit('update:modelValue', $event)"
   >
-    <option v-for="{ value, text } in options" :key="value" :value="value">{{ text }}</option>
+    <option v-for="{ value, text } in options" :key="value" :value="value">
+      {{ text }}
+    </option>
   </select>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from "vue";
 
 type SelectBoxOptions = {
-  value: any,
-  text: string
+  value: any;
+  text: string;
 };
 
 export default defineComponent({
@@ -21,15 +31,20 @@ export default defineComponent({
   emits: ["update:modelValue"],
   props: {
     modelValue: {},
-    options: Array as PropType<SelectBoxOptions[]>
+    options: Array as PropType<SelectBoxOptions[]>,
   },
   data() {
-    return { value: undefined as any }
+    return { value: undefined as any };
   },
   beforeMount() {
     this.value = this.modelValue;
-  }
-})
+  },
+  watch: {
+    value(value: any) {
+      this.$emit("update:modelValue", value);
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

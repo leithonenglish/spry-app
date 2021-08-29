@@ -5,16 +5,38 @@
       <ControlHolder title="Type">
         <RadioButtonGroup v-model="salary.type" :options="salaryTypeOptions" />
       </ControlHolder>
-      <ControlHolder v-if="!isPaidHourly" title="Period" class="mt-10">
-        <SelectBox v-model="salary.period" :options="salaryPeriodOptions" />
+      <ControlHolder v-if="!isPaidHourly" title="Frequency" class="mt-10">
+        <SelectBox
+          v-model="salary.frequency"
+          :options="salaryFrequncyOptions"
+        />
       </ControlHolder>
-      <ControlHolder title="Amount" class="mt-10">
-        <NumberInput v-model="salary.amount" type="money" />
-      </ControlHolder>
+      <div
+        :class="[
+          'mt-10 grid grid-rows-1',
+          isPaidHourly ? 'grid-cols-2 gap-6' : 'grid-cols-1',
+        ]"
+      >
+        <ControlHolder title="Amount">
+          <NumberInput v-model.lazy="salary.amount" type="money" />
+        </ControlHolder>
+        <ControlHolder v-if="isPaidHourly" title="Hours Worked Per Day">
+          <NumberInput
+            v-model.lazy="salary.hoursWorkedPerDay"
+            type="default"
+            :min="1"
+            :max="24"
+          />
+        </ControlHolder>
+      </div>
       <ControlHolder title="Other Income" class="mt-10">
-        <NumberInput v-model="salary.otherIcome" type="money" />
+        <NumberInput v-model.lazy="salary.otherIcome" type="money" />
       </ControlHolder>
-      <ControlHolder title="Are you over 65 years old?" :stacked="false" class="mt-10">
+      <ControlHolder
+        title="Are you over 65 years old?"
+        :stacked="false"
+        class="mt-10"
+      >
         <Switch v-model="salary.over65" />
       </ControlHolder>
       <ControlHolder title="Are you retired?" :stacked="false" class="mt-10">
@@ -23,20 +45,41 @@
     </div>
     <div class="flex flex-col mt-16">
       <h1 class="group-heading">Pension Details</h1>
-      <ControlHolder title="Do you make Pension contributions?" :stacked="false">
+      <ControlHolder
+        title="Do you make Pension contributions?"
+        :stacked="false"
+      >
         <Switch v-model="pension.active" />
       </ControlHolder>
       <template v-if="pension.active">
         <ControlHolder title="Type" class="mt-10">
-          <RadioButtonGroup v-model="pension.type" :options="pensionTypeOptions" />
+          <RadioButtonGroup
+            v-model="pension.type"
+            :options="pensionTypeOptions"
+          />
         </ControlHolder>
         <ControlHolder title="Amount" class="mt-10">
-          <NumberInput v-model="pension.amount" :type="pensionIsFixed ? 'money' : 'percentage'" />
+          <NumberInput
+            v-model.lazy="pension.amount"
+            :type="pensionIsFixed ? 'money' : 'percentage'"
+          />
         </ControlHolder>
       </template>
     </div>
     <button
-      class="text-white font-semibold flex items-center justify-center bg-crayola-blue px-5 py-6 mt-14 rounded-[4px] shadow-md"
+      class="
+        text-white
+        font-semibold
+        flex
+        items-center
+        justify-center
+        bg-crayola-blue
+        px-5
+        py-6
+        mt-14
+        rounded-[4px]
+        shadow-md
+      "
     >
       Calculate my taxes
       <Icon icon="line-md:arrow-right" class="ml-4 text-xl" />
@@ -45,14 +88,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import { Icon } from '@iconify/vue'
+import { defineComponent, PropType } from "vue";
+import { Icon } from "@iconify/vue";
 import NumberInput from "./NumberInput.vue";
 import SelectBox from "./SelectBox.vue";
-import ControlHolder from './ControlHolder.vue';
-import { Switch, RadioButtonGroup } from '../controls';
-import { SalaryType, SalaryPeriod, PensionType } from '../../models/enums';
-import { Pension, Salary } from '../../models/calculator';
+import ControlHolder from "./ControlHolder.vue";
+import { Switch, RadioButtonGroup } from "../controls";
+import { SalaryType, SalaryFrequency, PensionType } from "../../models/enums";
+import { Pension, Salary } from "../../models/calculator";
 
 export default defineComponent({
   name: "CalculatorForm",
@@ -62,37 +105,53 @@ export default defineComponent({
     SelectBox,
     ControlHolder,
     Switch,
-    RadioButtonGroup
+    RadioButtonGroup,
   },
   props: {
     salary: {
       type: Object as PropType<Salary>,
-      required: true
+      required: true,
     },
     pension: {
       type: Object as PropType<Pension>,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       salaryTypeOptions: [
-        { value: SalaryType.FIXED, text: "Fixed Salary", icon: "ph:currency-circle-dollar-duotone" },
-        { value: SalaryType.HOURLY, text: "Paid Hourly", icon: "ph:clock-clockwise-duotone" }
+        {
+          value: SalaryType.FIXED,
+          text: "Fixed Salary",
+          icon: "ph:currency-circle-dollar-duotone",
+        },
+        {
+          value: SalaryType.HOURLY,
+          text: "Paid Hourly",
+          icon: "ph:clock-clockwise-duotone",
+        },
       ],
-      salaryPeriodOptions: [
-        { value: SalaryPeriod.ANNUALLY, text: "Annually" },
-        { value: SalaryPeriod.MONTHLY, text: "Monthly" },
-        { value: SalaryPeriod.SEMI_MONTHLY, text: "Semi-Monthly" },
-        { value: SalaryPeriod.BI_WEEKLY, text: "Bi-Weekly" },
-        { value: SalaryPeriod.WEEKLY, text: "Weekly" },
-        { value: SalaryPeriod.DAILY, text: "Daily" },
+      salaryFrequncyOptions: [
+        { value: SalaryFrequency.ANNUALLY, text: "Per Annum" },
+        { value: SalaryFrequency.MONTHLY, text: "Per Month" },
+        { value: SalaryFrequency.SEMI_MONTHLY, text: "Semi-Monthly" },
+        { value: SalaryFrequency.BI_WEEKLY, text: "Bi-Weekly" },
+        { value: SalaryFrequency.WEEKLY, text: "Weekly" },
+        { value: SalaryFrequency.DAILY, text: "Daily" },
       ],
       pensionTypeOptions: [
-        { value: PensionType.FIXED, text: "Fixed Amount", icon: "ph:currency-dollar" },
-        { value: PensionType.PERCENTAGE, text: "Percentage", icon: "ph:percent-duotone" }
-      ]
-    }
+        {
+          value: PensionType.FIXED,
+          text: "Fixed Amount",
+          icon: "ph:currency-dollar",
+        },
+        {
+          value: PensionType.PERCENTAGE,
+          text: "Percentage",
+          icon: "ph:percent-duotone",
+        },
+      ],
+    };
   },
   computed: {
     isPaidHourly(): boolean {
@@ -101,8 +160,19 @@ export default defineComponent({
     pensionIsFixed(): boolean {
       return this.pension.type === PensionType.FIXED;
     },
-  }
-})
+  },
+  watch: {
+    "salary.type": {
+      handler(value: SalaryType) {
+        this.salary.amount = 0;
+        this.salary.frequency =
+          value === SalaryType.HOURLY
+            ? SalaryFrequency.HOURLY
+            : SalaryFrequency.ANNUALLY;
+      },
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

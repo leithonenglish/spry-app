@@ -1,4 +1,4 @@
 import { PensionType } from "./pension-type.enum";
-import { SalaryPeriod } from "./salary-period.enum";
+import { SalaryFrequency } from "./salary-frequency.enum";
 import { SalaryType } from "./salary-type.enum";
-export { PensionType, SalaryPeriod, SalaryType };
+export { PensionType, SalaryFrequency, SalaryType };
