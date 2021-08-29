@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="grid ? `grid grid-cols-${options?.length} gap-5` : 'flex justify-items-stretch items-center'"
-  >
+  <div :class="grid ? ['grid', gridColsStyle, 'gap-5'] : 'flex justify-items-stretch items-center'">
     <button
       v-for="{ text, value, icon } in options"
       :key="value"
@@ -41,7 +39,8 @@ export default defineComponent({
       default: true
     },
     options: {
-      type: Array as PropType<RadioButtonItem[]>
+      type: Array as PropType<RadioButtonItem[]>,
+      required: true
     }
   },
   data() {
@@ -56,6 +55,11 @@ export default defineComponent({
     onOptionSelected(value: any) {
       this.selectedValue = value;
       this.$emit('update:modelValue', value);
+    }
+  },
+  computed: {
+    gridColsStyle() {
+      return `grid-cols-${this.options.length}`;
     }
   }
 })
