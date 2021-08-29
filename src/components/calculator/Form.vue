@@ -12,15 +12,13 @@
         />
       </ControlHolder>
       <div
+        v-if="isPaidHourly"
         :class="[
           'mt-10 grid grid-rows-1',
           isPaidHourly ? 'grid-cols-2 gap-6' : 'grid-cols-1',
         ]"
       >
-        <ControlHolder title="Amount">
-          <NumberInput v-model.lazy="salary.amount" type="money" />
-        </ControlHolder>
-        <ControlHolder v-if="isPaidHourly" title="Hours Worked Per Day">
+        <ControlHolder title="Hours Worked Per Day">
           <NumberInput
             v-model.lazy="salary.hoursWorkedPerDay"
             type="default"
@@ -28,7 +26,18 @@
             :max="24"
           />
         </ControlHolder>
+        <ControlHolder title="Days Worked Per Week">
+          <NumberInput
+            v-model.lazy="salary.daysWorkedPerWeek"
+            type="default"
+            :min="1"
+            :max="7"
+          />
+        </ControlHolder>
       </div>
+      <ControlHolder title="Amount" class="mt-10">
+        <NumberInput v-model.lazy="salary.amount" type="money" />
+      </ControlHolder>
       <ControlHolder title="Other Income" class="mt-10">
         <NumberInput v-model.lazy="salary.otherIcome" type="money" />
       </ControlHolder>

@@ -42,6 +42,7 @@ export default defineComponent({
         frequency: SalaryFrequency.ANNUALLY,
         amount: 0,
         hoursWorkedPerDay: 8,
+        daysWorkedPerWeek: 1,
         retired: false,
         over65: false,
         otherIcome: 0,
@@ -68,18 +69,24 @@ export default defineComponent({
       return this.pension.type === PensionType.FIXED;
     },
     income(): number {
+      const {
+        amount,
+        daysWorkedPerWeek,
+        hoursWorkedPerDay,
+        otherIcome,
+        frequency,
+      } = this.salary;
       const incomeByFrequency = {
-        [`${SalaryFrequency.ANNUALLY}`]: this.salary.amount,
-        [`${SalaryFrequency.MONTHLY}`]: this.salary.amount * 12,
-        [`${SalaryFrequency.SEMI_MONTHLY}`]: this.salary.amount * 24,
-        [`${SalaryFrequency.BI_WEEKLY}`]: this.salary.amount * 26,
-        [`${SalaryFrequency.WEEKLY}`]: this.salary.amount * 52,
+        [`${SalaryFrequency.ANNUALLY}`]: amount,
+        [`${SalaryFrequency.MONTHLY}`]: amount * 12,
+        [`${SalaryFrequency.SEMI_MONTHLY}`]: amount * 24,
+        [`${SalaryFrequency.BI_WEEKLY}`]: amount * 26,
+        [`${SalaryFrequency.WEEKLY}`]: amount * 52,
         [`${SalaryFrequency.HOURLY}`]:
-          this.salary.amount * 52 * this.salary.hoursWorkedPerDay,
+          amount * 52 * daysWorkedPerWeek * hoursWorkedPerDay,
       };
       return (
-        parseFloat(`${incomeByFrequency[`${this.salary.frequency}`] || 0}`) +
-        this.salary.otherIcome
+        parseFloat(`${incomeByFrequency[`${frequency}`] || 0}`) + otherIcome
       );
     },
     pensionAmount(): number {

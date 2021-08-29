@@ -5,6 +5,7 @@ export default interface Salary {
   frequency: SalaryFrequency;
   amount: number;
   hoursWorkedPerDay: number;
+  daysWorkedPerWeek: number;
   retired: boolean;
   over65: boolean;
   otherIcome: 0;
