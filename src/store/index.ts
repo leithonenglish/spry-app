@@ -19,6 +19,6 @@ export const store = createStore<State>({
       monthlyCap: 7500,
     },
     educationTaxPercentage: 0.0225,
-    nhtPercentage: 0.2,
+    nhtPercentage: 0.02,
   },
 });
