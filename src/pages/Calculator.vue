@@ -2,7 +2,9 @@
   <div class="flex p-16">
     <div class="flex flex-col w-full lg:mx-auto lg:max-w-6xl">
       <h1 class="font-bold text-3xl">Jamaica Tax Calculator</h1>
-      <p class="mt-3">Calculate income tax and payroll taxes and other applicable deductions.</p>
+      <p class="mt-3">
+        Calculate income tax and payroll taxes and other applicable deductions.
+      </p>
       <div class="flex justify-start items-start">
         <Form :salary="salary" :pension="pension" />
         <Summary
@@ -38,7 +40,7 @@ export default defineComponent({
       salary: {
         type: SalaryType.FIXED,
         period: SalaryPeriod.ANNUALLY,
-        amount: 12760000,
+        amount: 0,
         retired: false,
         over65: false,
         otherIcome: 0,
@@ -112,12 +114,14 @@ export default defineComponent({
       return this.statutoryIncome * this.nhtPercentage;
     },
     incomeTax(): number {
-      const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } = this.incomeTaxSettings;
+      const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } =
+        this.incomeTaxSettings;
       if (this.statutoryIncome > this.taxThreshold) {
         if (this.statutoryIncome > 6000000) {
           return (
             (baseIncomeTaxBracket - this.taxThreshold) * basePercentage +
-            (this.statutoryIncome - baseIncomeTaxBracket) * overBracketPercentage
+            (this.statutoryIncome - baseIncomeTaxBracket) *
+              overBracketPercentage
           );
         }
         return this.statutoryIncome * 0.25;

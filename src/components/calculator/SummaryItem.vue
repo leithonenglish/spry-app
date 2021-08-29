@@ -5,7 +5,9 @@
       <slot name="title"></slot>
       <template v-if="!$slots['title']">{{ title }}</template>
     </h1>
-    <h2 :class="['text-xl font-semibold tracking-wider', amountStyle]">{{ toCurrency(amount) }}</h2>
+    <h2 :class="['text-xl font-semibold tracking-wider', amountStyle]">
+      {{ toCurrency(amount) }}
+    </h2>
     <p v-if="!!$slots['description'] || description" class="text-sm mt-3">
       <slot name="description"></slot>
       <template v-if="!$slots['description']">{{ description }}</template>
@@ -14,46 +16,43 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from "vue";
+import FormattersMixin from "../../mixins/formatters";
 
 export default defineComponent({
   name: "SummaryItem",
+  mixins: [FormattersMixin],
   props: {
     title: {
       type: String,
-      default: ""
+      default: "",
     },
     amount: {
       type: Number,
-      required: true
+      required: true,
     },
     description: {
       type: String,
-      default: ""
+      default: "",
     },
     state: {
       type: String as PropType<"default" | "positive" | "negative">,
-      default: "default"
+      default: "default",
     },
     divider: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     amountStyle(): string {
       const styles = {
-        "default": "text-gray-600",
-        "positive": "text-green-600",
-        "negative": "text-red-600"
-      }
+        default: "text-gray-600",
+        positive: "text-green-600",
+        negative: "text-red-600",
+      };
       return styles[this.state];
-    }
+    },
   },
-  methods: {
-    toCurrency(value: number) {
-      return new Intl.NumberFormat('en-JM', { style: 'currency', currency: 'JMD' }).format(value);
-    }
-  }
-})
+});
 </script>

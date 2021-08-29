@@ -1,10 +1,18 @@
 <template>
-  <div class="py-10 px-7 my-10 ml-14 min-w-[500px] bg-white rounded-md shadow-lg">
+  <div
+    class="py-10 px-7 my-10 ml-14 min-w-[500px] bg-white rounded-md shadow-lg"
+  >
     <SummaryItem title="Income" :amount="income" />
-    <SummaryItem v-if="pension > 0" title="Pension" :amount="pension" state="positive" divider />
+    <SummaryItem
+      v-if="pension > 0"
+      title="Pension"
+      :amount="pension"
+      state="positive"
+      divider
+    />
     <SummaryItem
       v-if="over65"
-      :amount="80000"
+      :amount="over65TaxReliefAmount"
       title="Tax Relief"
       state="positive"
       description="Tax relief given to citizens over 65 years old"
@@ -12,86 +20,136 @@
     />
     <SummaryItem
       v-if="retired"
-      :amount="80000"
+      :amount="retiredTaxReliefAmount"
       title="Tax Relief"
       state="positive"
       description="Tax relief given to citizens who are retired"
       divider
     />
-    <SummaryItem :amount="nis" title="National Insurance Scheme" state="negative" divider>
+    <SummaryItem
+      :amount="nis"
+      title="National Insurance Scheme"
+      state="negative"
+      divider
+    >
       <template #description>
         Calculated at
-        <b class="text-crayola-blue/80">3%</b> of your salary before any other taxes are deducted and is capped at
-        <b
-          class="text-crayola-blue/80"
-        >$7,500.00</b> monthly.
+        <b class="text-crayola-blue/80">{{
+          toPercentage(nisSettings.percentage)
+        }}</b>
+        of your salary before any other taxes are deducted and is capped at
+        <b class="text-crayola-blue/80">{{
+          toCurrency(nisSettings.monthlyCap)
+        }}</b>
+        monthly.
       </template>
     </SummaryItem>
-    <SummaryItem :amount="educationTax" title="Eduction Tax" state="negative" divider>
+    <SummaryItem
+      :amount="educationTax"
+      title="Eduction Tax"
+      state="negative"
+      divider
+    >
       <template #description>
         Calculated at
-        <b class="text-crayola-blue/80">2.25%</b> of your salary
+        <b class="text-crayola-blue/80">{{
+          toPercentage(educationTaxPercentage)
+        }}</b>
+        of your salary
       </template>
     </SummaryItem>
-    <SummaryItem :amount="nht" title="National Housing Trust" state="negative" divider>
+    <SummaryItem
+      :amount="nht"
+      title="National Housing Trust"
+      state="negative"
+      divider
+    >
       <template #description>
         Calculated at
-        <b class="text-crayola-blue/80">2%</b> of your salary
+        <b class="text-crayola-blue/80">{{ toPercentage(nhtPercentage) }}</b> of
+        your salary
       </template>
     </SummaryItem>
-    <SummaryItem :amount="incomeTax" title="Income Tax" state="negative" divider>
+    <SummaryItem
+      :amount="incomeTax"
+      title="Income Tax"
+      state="negative"
+      divider
+    >
       <template #description>
         Calculated at
-        <b class="text-crayola-blue/80">25%</b> of your the first
-        <b class="text-crayola-blue/80">$6,000,000.00</b> of your salary, then at
-        <b class="text-crayola-blue/80">30%</b> for the anything over.
+        <b class="text-crayola-blue/80">{{
+          toPercentage(incomeTaxSettings.basePercentage)
+        }}</b>
+        of your the first
+        <b class="text-crayola-blue/80">{{
+          toCurrency(incomeTaxSettings.baseIncomeTaxBracket)
+        }}</b>
+        of your salary, then at
+        <b class="text-crayola-blue/80">{{
+          toPercentage(incomeTaxSettings.overBracketPercentage)
+        }}</b>
+        for the anything over.
       </template>
     </SummaryItem>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import SummaryItem from './SummaryItem.vue'
+import { defineComponent } from "vue";
+import { mapState } from "vuex";
+import SummaryItem from "./SummaryItem.vue";
+import FormattersMixin from "../../mixins/formatters";
 
 export default defineComponent({
   name: "CalculatorSummary",
   components: {
-    SummaryItem
+    SummaryItem,
   },
+  mixins: [FormattersMixin],
   props: {
     income: {
       type: Number,
-      required: true
+      required: true,
     },
     pension: {
       type: Number,
-      required: true
+      required: true,
     },
     incomeTax: {
       type: Number,
-      required: true
+      required: true,
     },
     nht: {
       type: Number,
-      required: true
+      required: true,
     },
     nis: {
       type: Number,
-      required: true
+      required: true,
     },
     educationTax: {
       type: Number,
-      required: true
+      required: true,
     },
     over65: {
       type: Boolean,
-      default: false
+      default: false,
     },
     retired: {
       type: Boolean,
-      default: false
-    }
-  }
-})
+      default: false,
+    },
+  },
+  computed: {
+    ...mapState([
+      "over65TaxReliefAmount",
+      "retiredTaxReliefAmount",
+      "incomeTaxSettings",
+      "nisSettings",
+      "educationTaxPercentage",
+      "nhtPercentage",
+    ]),
+  },
+});
 </script>
