@@ -1,0 +1,112 @@
+<template>
+  <div class="flex flex-col mt-10 w-full min-w-[450px] max-w-lg">
+    <div class="flex flex-col">
+      <h1 class="group-heading">Salary Details</h1>
+      <ControlHolder title="Type">
+        <RadioButtonGroup v-model="salary.type" :options="salaryTypeOptions" />
+      </ControlHolder>
+      <ControlHolder v-if="!isPaidHourly" title="Period" class="mt-10">
+        <SelectBox v-model="salary.period" :options="salaryPeriodOptions" />
+      </ControlHolder>
+      <ControlHolder title="Amount" class="mt-10">
+        <NumberInput v-model="salary.amount" type="money" />
+      </ControlHolder>
+      <ControlHolder title="Other Income" class="mt-10">
+        <NumberInput v-model="salary.otherIcome" type="money" />
+      </ControlHolder>
+      <ControlHolder title="Are you over 65 years old?" :stacked="false" class="mt-10">
+        <Switch v-model="salary.over65" />
+      </ControlHolder>
+      <ControlHolder title="Are you retired?" :stacked="false" class="mt-10">
+        <Switch v-model="salary.retired" />
+      </ControlHolder>
+    </div>
+    <div class="flex flex-col mt-16">
+      <h1 class="group-heading">Pension Details</h1>
+      <ControlHolder title="Do you make Pension contributions?" :stacked="false">
+        <Switch v-model="pension.active" />
+      </ControlHolder>
+      <template v-if="pension.active">
+        <ControlHolder title="Type" class="mt-10">
+          <RadioButtonGroup v-model="pension.type" :options="pensionTypeOptions" />
+        </ControlHolder>
+        <ControlHolder title="Amount" class="mt-10">
+          <NumberInput v-model="pension.amount" :type="pensionIsFixed ? 'money' : 'percentage'" />
+        </ControlHolder>
+      </template>
+    </div>
+    <button
+      class="text-white font-semibold flex items-center justify-center bg-crayola-blue px-5 py-6 mt-14 rounded-[4px] shadow-md"
+    >
+      Calculate my taxes
+      <Icon icon="line-md:arrow-right" class="ml-4 text-xl" />
+    </button>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { Icon } from '@iconify/vue'
+import NumberInput from "./NumberInput.vue";
+import SelectBox from "./SelectBox.vue";
+import ControlHolder from './ControlHolder.vue';
+import { Switch, RadioButtonGroup } from '../controls';
+import { SalaryType, SalaryPeriod, PensionType } from '../../models/enums';
+import { Pension, Salary } from '../../models/calculator';
+
+export default defineComponent({
+  name: "CalculatorForm",
+  components: {
+    Icon,
+    NumberInput,
+    SelectBox,
+    ControlHolder,
+    Switch,
+    RadioButtonGroup
+  },
+  props: {
+    salary: {
+      type: Object as PropType<Salary>,
+      required: true
+    },
+    pension: {
+      type: Object as PropType<Pension>,
+      required: true
+    }
+  },
+  data() {
+    return {
+      salaryTypeOptions: [
+        { value: SalaryType.FIXED, text: "Fixed Salary", icon: "ph:currency-circle-dollar-duotone" },
+        { value: SalaryType.HOURLY, text: "Paid Hourly", icon: "ph:clock-clockwise-duotone" }
+      ],
+      salaryPeriodOptions: [
+        { value: SalaryPeriod.ANNUALLY, text: "Annually" },
+        { value: SalaryPeriod.MONTHLY, text: "Monthly" },
+        { value: SalaryPeriod.SEMI_MONTHLY, text: "Semi-Monthly" },
+        { value: SalaryPeriod.BI_WEEKLY, text: "Bi-Weekly" },
+        { value: SalaryPeriod.WEEKLY, text: "Weekly" },
+        { value: SalaryPeriod.DAILY, text: "Daily" },
+      ],
+      pensionTypeOptions: [
+        { value: PensionType.FIXED, text: "Fixed Amount", icon: "ph:currency-dollar" },
+        { value: PensionType.PERCENTAGE, text: "Percentage", icon: "ph:percent-duotone" }
+      ]
+    }
+  },
+  computed: {
+    isPaidHourly(): boolean {
+      return this.salary.type === SalaryType.HOURLY;
+    },
+    pensionIsFixed(): boolean {
+      return this.pension.type === PensionType.FIXED;
+    },
+  }
+})
+</script>
+
+<style lang="scss" scoped>
+.group-heading {
+  @apply text-xl text-gray-600 font-bold tracking-wider pb-2 mb-6 border-b-2 border-solid border-gray-200;
+}
+</style>
