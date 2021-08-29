@@ -1,5 +1,8 @@
 <template>
-  <div :class="grid ? ['grid', gridColsStyle, 'gap-5'] : 'flex justify-items-stretch items-center'">
+  <div
+    :class="grid ? 'grid gap-5' : 'flex justify-items-stretch items-center'"
+    :style="grid ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` } : {}"
+  >
     <button
       v-for="{ text, value, icon } in options"
       :key="value"
@@ -55,11 +58,6 @@ export default defineComponent({
     onOptionSelected(value: any) {
       this.selectedValue = value;
       this.$emit('update:modelValue', value);
-    }
-  },
-  computed: {
-    gridColsStyle() {
-      return `grid-cols-${this.options.length}`;
     }
   }
 })
