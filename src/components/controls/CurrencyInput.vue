@@ -13,12 +13,16 @@ export default defineComponent({
     options: Object,
   },
   setup(props: any) {
-    const { formattedValue, inputRef, setValue } = useCurrencyInput(
+    const { formattedValue, inputRef, setValue, setOptions } = useCurrencyInput(
       props.options
     );
-    const { modelValue } = toRefs(props);
+    const { modelValue, options } = toRefs(props);
     watch(modelValue, (value: number) => {
       setValue(value);
+    });
+
+    watch(options, (value: any) => {
+      setOptions(value);
     });
 
     return { inputRef, formattedValue };
