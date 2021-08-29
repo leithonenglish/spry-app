@@ -21,18 +21,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import { Summary, Form } from '../components/calculator'
-import { SalaryType, SalaryPeriod, PensionType } from '../models/enums';
-import { Pension, Salary } from '../models/calculator';
-
-const THRESHOLD = 1500096;
+import { defineComponent } from "vue";
+import { Summary, Form } from "../components/calculator";
+import { SalaryType, SalaryPeriod, PensionType } from "../models/enums";
+import { Pension, Salary } from "../models/calculator";
+import { mapState } from "vuex";
 
 export default defineComponent({
   name: "Calculator",
   components: {
     Summary,
-    Form
+    Form,
   },
   data() {
     return {
@@ -42,17 +41,26 @@ export default defineComponent({
         amount: 12760000,
         retired: false,
         over65: false,
-        otherIcome: 0
+        otherIcome: 0,
       } as Salary,
       pension: {
         active: true,
         type: PensionType.FIXED,
-        amount: 0
+        amount: 0,
       } as Pension,
       calculated: false,
-    }
+    };
   },
   computed: {
+    ...mapState([
+      "taxThreshold",
+      "over65TaxReliefAmount",
+      "retiredTaxReliefAmount",
+      "incomeTaxSettings",
+      "nisSettings",
+      "educationTaxPercentage",
+      "nhtPercentage",
+    ]),
     pensionIsFixed(): boolean {
       return this.pension.type === PensionType.FIXED;
     },
@@ -63,12 +71,17 @@ export default defineComponent({
         [`${SalaryPeriod.SEMI_MONTHLY}`]: this.salary.amount * 24,
         [`${SalaryPeriod.BI_WEEKLY}`]: this.salary.amount * 26,
         [`${SalaryPeriod.WEEKLY}`]: this.salary.amount * 52,
-        [`${SalaryPeriod.HOURLY}`]: this.salary.amount
+        [`${SalaryPeriod.HOURLY}`]: this.salary.amount,
       };
-      return parseFloat(`${income[this.salary.period] || 0}`) + this.salary.otherIcome;
+      return (
+        parseFloat(`${income[this.salary.period] || 0}`) +
+        this.salary.otherIcome
+      );
     },
     pensionAmount(): number {
-      return this.pensionIsFixed ? this.pension.amount : this.pension.amount / 100 * this.income;
+      return this.pensionIsFixed
+        ? this.pension.amount
+        : (this.pension.amount / 100) * this.income;
     },
     statutoryIncome(): number {
       let amount = this.income - this.nis;
@@ -76,45 +89,50 @@ export default defineComponent({
         amount -= this.pensionAmount;
       }
       if (this.salary.over65) {
-        amount -= 80000;
+        amount -= this.retiredTaxReliefAmount;
       }
       if (this.salary.retired) {
-        amount -= 80000;
+        amount -= this.retiredTaxReliefAmount;
       }
       return amount;
     },
     nis(): number {
+      const { percentage, monthlyCap } = this.nisSettings;
       const montlyIcome = this.income / 12;
-      const amount = montlyIcome * 0.03;
-      if (amount > 7500) {
-        return 90000;
+      const amount = montlyIcome * percentage;
+      if (amount > monthlyCap) {
+        return monthlyCap * 12;
       }
       return amount * 12;
     },
     educationTax(): number {
-      return this.statutoryIncome * 0.0225;
+      return this.statutoryIncome * this.educationTaxPercentage;
     },
     nht(): number {
-      return this.statutoryIncome * 0.02;
+      return this.statutoryIncome * this.nhtPercentage;
     },
     incomeTax(): number {
-      if (this.statutoryIncome > THRESHOLD) {
+      const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } = this.incomeTaxSettings;
+      if (this.statutoryIncome > this.taxThreshold) {
         if (this.statutoryIncome > 6000000) {
-          return ((6000000 - THRESHOLD) * 0.25) + ((this.statutoryIncome - 6000000) * 0.3);
+          return (
+            (baseIncomeTaxBracket - this.taxThreshold) * basePercentage +
+            (this.statutoryIncome - baseIncomeTaxBracket) * overBracketPercentage
+          );
         }
         return this.statutoryIncome * 0.25;
       }
       return 0;
-    }
+    },
   },
   watch: {
-    'pension.active': {
+    "pension.active": {
       handler(value: boolean) {
         if (!value) {
           this.pension.amount = 0;
         }
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
 </script>
