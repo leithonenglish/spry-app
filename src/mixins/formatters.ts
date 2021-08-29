@@ -10,7 +10,7 @@ const formattersMixin = {
       return new Intl.NumberFormat("en-JM", {
         style: "percent",
         minimumFractionDigits: 2,
-        maximumSignificantDigits: 2,
+        maximumSignificantDigits: 3,
       }).format(value);
     },
   },
