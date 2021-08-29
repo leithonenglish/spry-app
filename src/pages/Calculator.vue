@@ -84,7 +84,12 @@ export default defineComponent({
       return amount;
     },
     nis(): number {
-      return 90000
+      const montlyIcome = this.income / 12;
+      const amount = montlyIcome * 0.03;
+      if (amount > 7500) {
+        return 90000;
+      }
+      return amount * 12;
     },
     educationTax(): number {
       return this.statutoryIncome * 0.0225;
@@ -100,6 +105,15 @@ export default defineComponent({
         return this.statutoryIncome * 0.25;
       }
       return 0;
+    }
+  },
+  watch: {
+    'pension.active': {
+      handler(value: boolean) {
+        if (!value) {
+          this.pension.amount = 0;
+        }
+      }
     }
   }
 })

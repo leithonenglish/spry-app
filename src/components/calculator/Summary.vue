@@ -24,7 +24,7 @@
         <b class="text-crayola-blue/80">3%</b> of your salary before any other taxes are deducted and is capped at
         <b
           class="text-crayola-blue/80"
-        >$3,750.00</b> monthly.
+        >$7,500.00</b> monthly.
       </template>
     </SummaryItem>
     <SummaryItem :amount="educationTax" title="Eduction Tax" state="negative" divider>
