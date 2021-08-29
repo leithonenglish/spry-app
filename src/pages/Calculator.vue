@@ -98,6 +98,9 @@ export default defineComponent({
       }
       return amount;
     },
+    hasStatutoryIncome(): boolean {
+      return this.statutoryIncome > 0;
+    },
     nis(): number {
       const { percentage, monthlyCap } = this.nisSettings;
       const montlyIcome = this.income / 12;
@@ -108,10 +111,14 @@ export default defineComponent({
       return amount * 12;
     },
     educationTax(): number {
-      return this.statutoryIncome * this.educationTaxPercentage;
+      return this.hasStatutoryIncome
+        ? this.statutoryIncome * this.educationTaxPercentage
+        : 0;
     },
     nht(): number {
-      return this.statutoryIncome * this.nhtPercentage;
+      return this.hasStatutoryIncome
+        ? this.statutoryIncome * this.nhtPercentage
+        : 0;
     },
     incomeTax(): number {
       const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } =
