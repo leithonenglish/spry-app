@@ -6,19 +6,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "ControlHolder",
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     stacked: {
       type: Boolean,
-      default: true
-    }
-  }
-})
+      default: true,
+    },
+  },
+});
 </script>

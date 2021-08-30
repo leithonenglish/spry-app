@@ -1,12 +1,16 @@
 <template>
   <div
     :class="grid ? 'grid gap-5' : 'flex justify-items-stretch items-center'"
-    :style="grid ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` } : {}"
+    :style="
+      grid
+        ? { gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))` }
+        : {}
+    "
   >
     <button
       v-for="{ text, value, icon } in options"
       :key="value"
-      :class="['radio-btn', { 'selected': value == selectedValue }]"
+      :class="['radio-btn', { selected: value == selectedValue }]"
       @click.prevent="onOptionSelected(value)"
     >
       <Icon
@@ -21,35 +25,35 @@
 
 <script lang="ts">
 type RadioButtonItem = {
-  value: any,
-  text: String,
-  icon?: String | null
-}
-import { defineComponent, PropType } from 'vue'
-import { Icon } from '@iconify/vue'
+  value: any;
+  text: String;
+  icon?: String | null;
+};
+import { defineComponent, PropType } from "vue";
+import { Icon } from "@iconify/vue";
 export default defineComponent({
-  name: 'RadioButtonGroup',
-  emits: ['update:modelValue', 'selected'],
+  name: "RadioButtonGroup",
+  emits: ["update:modelValue", "selected"],
   components: {
-    Icon
+    Icon,
   },
   props: {
     modelValue: {
-      required: true
+      required: true,
     },
     grid: {
       type: Boolean,
-      default: true
+      default: true,
     },
     options: {
       type: Array as PropType<RadioButtonItem[]>,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      selectedValue: null as any | null
-    }
+      selectedValue: null as any | null,
+    };
   },
   beforeMount() {
     this.selectedValue = this.modelValue;
@@ -57,10 +61,15 @@ export default defineComponent({
   methods: {
     onOptionSelected(value: any) {
       this.selectedValue = value;
-      this.$emit('update:modelValue', value);
-    }
-  }
-})
+      this.$emit("update:modelValue", value);
+    },
+  },
+  watch: {
+    modelValue(value: any) {
+      this.selectedValue = value;
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

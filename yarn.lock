@@ -51,6 +51,14 @@
   resolved "https://registry.yarnpkg.com/@iconify/vue/-/vue-3.0.0.tgz#7e2fa8a515aea4e50313d41acdb3cc0b3492829d"
   integrity sha512-7heVMHkpB3d7l+/ofAQ+f9k5mETi/FWEnI5dXFQqsDmc/yuO2Nz5D9XkSDvO1b6TRVawf/kleN8JXRaClTM4nQ==
 
+"@mathieustan/vue-datepicker@^0.2.11":
+  version "0.2.11"
+  resolved "https://registry.yarnpkg.com/@mathieustan/vue-datepicker/-/vue-datepicker-0.2.11.tgz#58d420c04312417fb10978f838ef984c28389c2d"
+  integrity sha512-+EQvlAwnC0fn8UCUgYaGI1r027HzrIWIbqtcYZMQ8TRZbhzT3ILXlqRSxX4z547vF7dpmCjNyvpLAF5zFMnQug==
+  dependencies:
+    body-scroll-lock "^2.6.1"
+    dayjs "1.8.24"
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
@@ -336,6 +344,11 @@ bluebird@^3.7.2:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==
 
+body-scroll-lock@^2.6.1:
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/body-scroll-lock/-/body-scroll-lock-2.7.1.tgz#caf3f9c91773af1ffb684cd66ed9137b5b737014"
+  integrity sha512-hS53SQ8RhM0e4DsQ3PKz6Gr2O7Kpdh59TWU98GHjaQznL7y4dFycEPk7pFQAikqBaUSCArkc5E3pe7CWIt2fZA==
+
 boolbase@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
@@ -495,6 +508,11 @@ csstype@^2.6.8:
   version "2.6.17"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.17.tgz#4cf30eb87e1d1a005d8b6510f95292413f6a1c0e"
   integrity sha512-u1wmTI1jJGzCJzWndZo8mk4wnPTZd1eOIYTYvuEyOQGfmDl3TrabCCfKnOC86FZwW/9djqTl933UF/cS425i9A==
+
+dayjs@1.8.24:
+  version "1.8.24"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.8.24.tgz#2ef8a2ab9425eaf3318fe78825be1c571027488d"
+  integrity sha512-bImQZbBv86zcOWOq6fLg7r4aqMx8fScdmykA7cSh+gH1Yh8AM0Dbw0gHYrsOrza6oBBnkK+/OaR+UAa9UsMrDw==
 
 debug@^4.3.1, debug@^4.3.2:
   version "4.3.2"

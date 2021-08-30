@@ -6,7 +6,7 @@
         Calculate income tax and payroll taxes and other applicable deductions.
       </p>
       <div class="flex justify-start items-start">
-        <Form :salary="salary" :pension="pension" />
+        <Form :settings="settings" :salary="salary" :pension="pension" />
         <Summary
           :income="income"
           :pension="pensionAmount"
@@ -26,8 +26,9 @@
 import { defineComponent } from "vue";
 import { Summary, Form } from "../components/calculator";
 import { SalaryType, SalaryFrequency, PensionType } from "../models/enums";
-import { Pension, Salary } from "../models/calculator";
+import { Pension, Salary, Settings } from "../models/calculator";
 import { mapState } from "vuex";
+import { CalculationPeriod } from "../models/calculation-period";
 
 export default defineComponent({
   name: "Calculator",
@@ -37,6 +38,9 @@ export default defineComponent({
   },
   data() {
     return {
+      settings: {
+        period: CalculationPeriod.FULL_YEAR,
+      } as Settings,
       salary: {
         type: SalaryType.FIXED,
         frequency: SalaryFrequency.ANNUALLY,

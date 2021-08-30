@@ -1,6 +1,12 @@
 <template>
   <div class="flex flex-col mt-10 w-full min-w-[450px] max-w-lg">
     <div class="flex flex-col">
+      <h1 class="group-heading">Calculation Setting</h1>
+      <ControlHolder title="Type">
+        <RadioButtonGroup v-model="settings.period" :options="periodOptions" />
+      </ControlHolder>
+    </div>
+    <div class="flex flex-col mt-16">
       <h1 class="group-heading">Salary Details</h1>
       <ControlHolder title="Type">
         <RadioButtonGroup v-model="salary.type" :options="salaryTypeOptions" />
@@ -90,7 +96,7 @@
         shadow-md
       "
     >
-      Calculate my taxes
+      Calculate tax breakdown
       <Icon icon="line-md:arrow-right" class="ml-4 text-xl" />
     </button>
   </div>
@@ -104,7 +110,7 @@ import SelectBox from "./SelectBox.vue";
 import ControlHolder from "./ControlHolder.vue";
 import { Switch, RadioButtonGroup } from "../controls";
 import { SalaryType, SalaryFrequency, PensionType } from "../../models/enums";
-import { Pension, Salary } from "../../models/calculator";
+import { Pension, Salary, Settings } from "../../models/calculator";
 
 export default defineComponent({
   name: "CalculatorForm",
@@ -117,6 +123,10 @@ export default defineComponent({
     RadioButtonGroup,
   },
   props: {
+    settings: {
+      type: Object as PropType<Settings>,
+      required: true,
+    },
     salary: {
       type: Object as PropType<Salary>,
       required: true,
@@ -128,6 +138,18 @@ export default defineComponent({
   },
   data() {
     return {
+      periodOptions: [
+        {
+          value: 1,
+          text: "Entire Year",
+          icon: "ph:calendar-check-duotone",
+        },
+        {
+          value: 2,
+          text: "Date Range",
+          icon: "ph:calendar-duotone",
+        },
+      ],
       salaryTypeOptions: [
         {
           value: SalaryType.FIXED,

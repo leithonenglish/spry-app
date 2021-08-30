@@ -1,34 +1,39 @@
 <template>
-  <button :class="{ 'on': isOn }" @click.prevent="onToggle">
+  <button :class="{ on: isOn }" @click.prevent="onToggle">
     <span></span>
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "Switch",
   emits: ["update:modelValue", "change"],
   props: {
     modelValue: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   data() {
-    return { isOn: false }
+    return { isOn: false };
   },
   beforeMount() {
     this.isOn = this.modelValue;
+  },
+  watch: {
+    modelValue(value: boolean) {
+      this.isOn = value;
+    },
   },
   methods: {
     onToggle() {
       this.isOn = !this.isOn;
       this.$emit("update:modelValue", this.isOn);
       this.$emit("change", this.isOn);
-    }
-  }
-})
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>

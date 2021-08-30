@@ -1,3 +1,4 @@
 import Pension from "./pension.interface";
 import Salary from "./salary.interface";
-export { Pension, Salary };
+import Settings from "./settings";
+export { Pension, Salary, Settings };

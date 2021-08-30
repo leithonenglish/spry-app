@@ -81,7 +81,9 @@
         <b class="text-crayola-blue/80">{{
           toPercentage(incomeTaxSettings.basePercentage)
         }}</b>
-        of your the first
+        of your Statutory Income—
+        <b>Gross Salary - NIS - Pension - any Tax Reliefs - Tax Threshold</b>
+        for the first
         <b class="text-crayola-blue/80">{{
           toCurrency(incomeTaxSettings.baseIncomeTaxBracket)
         }}</b>
