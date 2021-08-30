@@ -129,9 +129,7 @@ export default defineComponent({
         : 0;
     },
     nht(): number {
-      return this.hasStatutoryIncome
-        ? this.statutoryIncome * this.nhtPercentage
-        : 0;
+      return this.income * this.nhtPercentage;
     },
     incomeTax(): number {
       const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } =
