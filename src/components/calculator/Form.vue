@@ -6,15 +6,30 @@
         <RadioButtonGroup v-model="settings.period" :options="periodOptions" />
       </ControlHolder>
     </div>
+    <template v-if="!isForFullYear">
+      <ControlHolder title="Frequency" class="mt-10">
+        <SelectBox
+          v-model="settings.frequency"
+          :options="payrollFrequencyOptions"
+        />
+      </ControlHolder>
+      <ControlHolder title="Y.T.D Gross Salary" class="mt-10">
+        <NumberInput v-model.lazy="settings.grossPay" type="money" />
+      </ControlHolder>
+    </template>
     <div class="flex flex-col mt-16">
       <h1 class="group-heading">Salary Details</h1>
-      <ControlHolder title="Type">
+      <ControlHolder v-if="isForFullYear" title="Type">
         <RadioButtonGroup v-model="salary.type" :options="salaryTypeOptions" />
       </ControlHolder>
-      <ControlHolder v-if="!isPaidHourly" title="Frequency" class="mt-10">
+      <ControlHolder
+        v-if="!isPaidHourly && isForFullYear"
+        title="Frequency"
+        class="mt-10"
+      >
         <SelectBox
           v-model="salary.frequency"
-          :options="salaryFrequncyOptions"
+          :options="salaryFrequencyOptions"
         />
       </ControlHolder>
       <div
@@ -41,7 +56,7 @@
           />
         </ControlHolder>
       </div>
-      <ControlHolder title="Amount" class="mt-10">
+      <ControlHolder title="Amount" :class="{ 'mt-10': isForFullYear }">
         <NumberInput v-model.lazy="salary.amount" type="money" />
       </ControlHolder>
       <ControlHolder title="Other Income" class="mt-10">
@@ -109,8 +124,14 @@ import NumberInput from "./NumberInput.vue";
 import SelectBox from "./SelectBox.vue";
 import ControlHolder from "./ControlHolder.vue";
 import { Switch, RadioButtonGroup } from "../controls";
-import { SalaryType, SalaryFrequency, PensionType } from "../../models/enums";
+import {
+  SalaryType,
+  SalaryFrequency,
+  PensionType,
+  PayrollFrequency,
+} from "../../models/enums";
 import { Pension, Salary, Settings } from "../../models/calculator";
+import { CalculationPeriod } from "../../models/calculation-period";
 
 export default defineComponent({
   name: "CalculatorForm",
@@ -146,7 +167,7 @@ export default defineComponent({
         },
         {
           value: 2,
-          text: "Date Range",
+          text: "By Frequency",
           icon: "ph:calendar-duotone",
         },
       ],
@@ -162,7 +183,7 @@ export default defineComponent({
           icon: "ph:clock-clockwise-duotone",
         },
       ],
-      salaryFrequncyOptions: [
+      salaryFrequencyOptions: [
         { value: SalaryFrequency.ANNUALLY, text: "Per Annum" },
         { value: SalaryFrequency.MONTHLY, text: "Per Month" },
         { value: SalaryFrequency.SEMI_MONTHLY, text: "Semi-Monthly" },
@@ -182,6 +203,12 @@ export default defineComponent({
           icon: "ph:percent-duotone",
         },
       ],
+      payrollFrequencyOptions: [
+        { value: PayrollFrequency.MONTHLY, text: "Monthly" },
+        { value: PayrollFrequency.SEMI_MONTHLY, text: "Semi-Monthly" },
+        { value: PayrollFrequency.BI_WEEKLY, text: "Bi-Weekly" },
+        { value: PayrollFrequency.WEEKLY, text: "Weekly" },
+      ],
     };
   },
   computed: {
@@ -190,6 +217,9 @@ export default defineComponent({
     },
     pensionIsFixed(): boolean {
       return this.pension.type === PensionType.FIXED;
+    },
+    isForFullYear(): boolean {
+      return this.settings.period === CalculationPeriod.FULL_YEAR;
     },
   },
   watch: {

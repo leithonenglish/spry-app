@@ -1,39 +1,18 @@
 <template>
-  <div class="flex border-2 border-gray-300 border-solid rounded-[4px]">
-    <span
-      v-if="hasIcon"
-      class="
-        flex
-        items-center
-        justify-center
-        border-r-2 border-gray-300 border-solid
-        px-3
-      "
-    >
-      <Icon :icon="icon" class="text-3xl text-gray-500" />
-    </span>
+  <InputHolder :icon="icon">
     <currency-input
-      class="
-        font-bold
-        text-gray-600 text-2xl
-        tracking-widest
-        h-14
-        w-full
-        border-none
-        outline-none
-        px-3
-      "
       :options="options"
       v-model="amount"
       @focus="blurred = false"
       @blur="onBlur"
     />
-  </div>
+  </InputHolder>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Icon } from "@iconify/vue";
+import InputHolder from "./InputHolder.vue";
 import { CurrencyInput } from "../controls";
 
 export default defineComponent({
@@ -41,6 +20,7 @@ export default defineComponent({
   emits: ["update:modelValue", "change"],
   components: {
     Icon,
+    InputHolder,
     CurrencyInput,
   },
   props: {
@@ -119,3 +99,11 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+div {
+  :deep(input) {
+    @apply font-bold text-gray-600 text-2xl tracking-widest h-14 w-full border-none outline-none px-3;
+  }
+}
+</style>

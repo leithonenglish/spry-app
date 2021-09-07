@@ -25,7 +25,12 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import { Summary, Form } from "../components/calculator";
-import { SalaryType, SalaryFrequency, PensionType } from "../models/enums";
+import {
+  SalaryType,
+  SalaryFrequency,
+  PensionType,
+  PayrollFrequency,
+} from "../models/enums";
 import { Pension, Salary, Settings } from "../models/calculator";
 import { mapState } from "vuex";
 import { CalculationPeriod } from "../models/calculation-period";
@@ -40,6 +45,8 @@ export default defineComponent({
     return {
       settings: {
         period: CalculationPeriod.FULL_YEAR,
+        grossPay: 0,
+        frequency: PayrollFrequency.MONTHLY,
       } as Settings,
       salary: {
         type: SalaryType.FIXED,
@@ -72,25 +79,45 @@ export default defineComponent({
     pensionIsFixed(): boolean {
       return this.pension.type === PensionType.FIXED;
     },
+    isEntireYear(): boolean {
+      return this.settings.period === CalculationPeriod.FULL_YEAR;
+    },
     income(): number {
-      const {
-        amount,
-        daysWorkedPerWeek,
-        hoursWorkedPerDay,
-        otherIcome,
-        frequency,
-      } = this.salary;
+      if (this.isEntireYear) {
+        const {
+          amount,
+          daysWorkedPerWeek,
+          hoursWorkedPerDay,
+          otherIcome,
+          frequency,
+        } = this.salary;
+        const incomeByFrequency = {
+          [`${SalaryFrequency.ANNUALLY}`]: amount,
+          [`${SalaryFrequency.MONTHLY}`]: amount * 12,
+          [`${SalaryFrequency.SEMI_MONTHLY}`]: amount * 24,
+          [`${SalaryFrequency.BI_WEEKLY}`]: amount * 26,
+          [`${SalaryFrequency.WEEKLY}`]: amount * 52,
+          [`${SalaryFrequency.HOURLY}`]:
+            amount * 52 * daysWorkedPerWeek * hoursWorkedPerDay,
+        };
+        return (
+          parseFloat(`${incomeByFrequency[`${frequency}`] || 0}`) + otherIcome
+        );
+      } else {
+        const { amount, otherIcome } = this.salary;
+        const { grossPay } = this.settings;
+        return amount + grossPay + otherIcome;
+      }
+    },
+    incomeRatioByFrequency(): number {
       const incomeByFrequency = {
-        [`${SalaryFrequency.ANNUALLY}`]: amount,
-        [`${SalaryFrequency.MONTHLY}`]: amount * 12,
-        [`${SalaryFrequency.SEMI_MONTHLY}`]: amount * 24,
-        [`${SalaryFrequency.BI_WEEKLY}`]: amount * 26,
-        [`${SalaryFrequency.WEEKLY}`]: amount * 52,
-        [`${SalaryFrequency.HOURLY}`]:
-          amount * 52 * daysWorkedPerWeek * hoursWorkedPerDay,
+        [`${PayrollFrequency.MONTHLY}`]: 4,
+        [`${PayrollFrequency.BI_WEEKLY}`]: 2,
+        [`${PayrollFrequency.SEMI_MONTHLY}`]: 2,
+        [`${PayrollFrequency.WEEKLY}`]: 1,
       };
-      return (
-        parseFloat(`${incomeByFrequency[`${frequency}`] || 0}`) + otherIcome
+      return parseInt(
+        `${incomeByFrequency[`${this.settings.frequency}`] || 0}`
       );
     },
     pensionAmount(): number {
@@ -109,19 +136,28 @@ export default defineComponent({
       if (this.salary.retired) {
         amount -= this.retiredTaxReliefAmount;
       }
-      return amount;
+      return this.isEntireYear ? amount : amount * this.settings.frequency;
     },
     hasStatutoryIncome(): boolean {
       return this.statutoryIncome > 0;
     },
     nis(): number {
       const { percentage, monthlyCap } = this.nisSettings;
-      const montlyIcome = this.income / 12;
-      const amount = montlyIcome * percentage;
-      if (amount > monthlyCap) {
-        return monthlyCap * 12;
+      if (this.isEntireYear) {
+        const montlyIncome = this.income / 12;
+        const amount = montlyIncome * percentage;
+        if (amount > monthlyCap) {
+          return monthlyCap * 12;
+        }
+        return amount * 12;
+      } else {
+        const amount =
+          (this.incomeRatioByFrequency / 4) * this.income * percentage;
+        if (amount > monthlyCap) {
+          return monthlyCap;
+        }
+        return amount;
       }
-      return amount * 12;
     },
     educationTax(): number {
       return this.hasStatutoryIncome
@@ -134,17 +170,20 @@ export default defineComponent({
     incomeTax(): number {
       const { baseIncomeTaxBracket, basePercentage, overBracketPercentage } =
         this.incomeTaxSettings;
+      let tax = 0;
       if (this.statutoryIncome > this.taxThreshold) {
-        if (this.statutoryIncome > 6000000) {
-          return (
+        if (this.statutoryIncome > baseIncomeTaxBracket) {
+          tax =
             (baseIncomeTaxBracket - this.taxThreshold) * basePercentage +
             (this.statutoryIncome - baseIncomeTaxBracket) *
-              overBracketPercentage
-          );
+              overBracketPercentage;
         }
-        return this.statutoryIncome * 0.25;
+        tax = (this.statutoryIncome - this.taxThreshold) * 0.25;
       }
-      return 0;
+      if (tax > 0) {
+        return tax / this.settings.frequency;
+      }
+      return tax;
     },
   },
   watch: {

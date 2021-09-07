@@ -1,7 +1,8 @@
 import { CalculationPeriod } from "../calculation-period";
+import { PayrollFrequency } from "../payroll-frequency.enum";
 
 export default interface Settings {
   period: CalculationPeriod;
-  startDate?: Date;
-  endDate?: Date;
+  grossPay: number;
+  frequency: PayrollFrequency;
 }
