@@ -6,6 +6,7 @@
         Calculate income tax and payroll taxes and other applicable deductions.
       </p>
       <div class="flex justify-start items-start">
+        {{ statutoryIncome }}
         <Form :settings="settings" :salary="salary" :pension="pension" />
         <Summary
           :income="income"
@@ -160,9 +161,9 @@ export default defineComponent({
       }
     },
     educationTax(): number {
-      return this.hasStatutoryIncome
-        ? this.statutoryIncome * this.educationTaxPercentage
-        : 0;
+      return this.calculateTaxByFrequency(
+        this.statutoryIncome * this.educationTaxPercentage
+      );
     },
     nht(): number {
       return this.income * this.nhtPercentage;
@@ -177,13 +178,20 @@ export default defineComponent({
             (baseIncomeTaxBracket - this.taxThreshold) * basePercentage +
             (this.statutoryIncome - baseIncomeTaxBracket) *
               overBracketPercentage;
+        } else {
+          tax = (this.statutoryIncome - this.taxThreshold) * 0.25;
         }
-        tax = (this.statutoryIncome - this.taxThreshold) * 0.25;
       }
+      console.log(tax);
       if (tax > 0) {
-        return tax / this.settings.frequency;
+        return this.calculateTaxByFrequency(tax);
       }
       return tax;
+    },
+  },
+  methods: {
+    calculateTaxByFrequency(tax: number) {
+      return this.isEntireYear ? tax : tax / this.settings.frequency;
     },
   },
   watch: {
