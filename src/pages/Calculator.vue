@@ -6,7 +6,6 @@
         Calculate income tax and payroll taxes and other applicable deductions.
       </p>
       <div class="flex justify-start items-start">
-        {{ statutoryIncome }}
         <Form :settings="settings" :salary="salary" :pension="pension" />
         <Summary
           :income="income"
